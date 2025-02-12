@@ -77,7 +77,7 @@ If there are labels in the ROI file that should be ignored, use the ```--ignore`
 ```
 > python -m tictac img_dir roi.nrrd tac.txt --labels 1,brain --ignore 0
 ```
-This example replaces the label ```1``` with ```brain```, and will ignore the label ```0````, which will not be
+This example replaces the label ```1``` with ```brain```, and will ignore the label ```0```, which will not be
 output to the resulting file.
 
 ### Resampling
