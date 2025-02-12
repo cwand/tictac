@@ -36,7 +36,7 @@ def save_table(table: dict[str, npt.NDArray[np.float64]], path: str):
     using numpy.savetxt.
 
     Arguments:
-    table   --  The table-data (e.g. from lazy_series_roi_means)
+    table   --  The table-data in a dict form
     path    --  The filename where the data will be saved.
     """
 

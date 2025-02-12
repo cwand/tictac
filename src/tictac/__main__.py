@@ -35,6 +35,7 @@ def main(sys_args: list[str]):
             roi_label, new_label = label_string.split(',')
             labels[roi_label] = new_label
 
+    # Run ROI-means code
     dyn = tictac.series_roi_means(
         series_path=args.img_dir,
         roi_path=args.roi_path,
@@ -43,8 +44,9 @@ def main(sys_args: list[str]):
         ignore=args.ignore)
     tictac.save_table(table=dyn, path=args.out_path)
 
+    # Report successful end of program
     run_time = (time.time_ns() - start_time) * 1e-9
-    print(f'TICTAC finished in {run_time:.1f} seconds.')
+    print(f'TICTAC finished successfully in {run_time:.1f} seconds.')
     print()
 
 
