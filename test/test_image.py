@@ -1,6 +1,6 @@
 import os.path
 import unittest
-import tictac
+import tictac.image
 import numpy as np
 import SimpleITK as sitk
 
@@ -9,7 +9,7 @@ class TestLoadDynamicSeries(unittest.TestCase):
 
     def test_load_dynamic_series_8_3V(self):
         dcm_path = os.path.join('test', 'data', '8_3V')
-        dyn = tictac.load_dynamic_series(dcm_path)
+        dyn = tictac.image.load_dynamic_series(dcm_path)
         img = dyn['img']
         acq = dyn['acq']
         self.assertEqual(len(img), 9)
@@ -48,12 +48,12 @@ class TestResampleSeriesToReference(unittest.TestCase):
 
     def test_resample_series_to_reference_8_3V(self):
         dcm_path = os.path.join('test', 'data', '8_3V')
-        dyn = tictac.load_dynamic_series(dcm_path)
+        dyn = tictac.image.load_dynamic_series(dcm_path)
 
         ref_img = sitk.ReadImage(os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation_2.nrrd'))
 
-        img = tictac.resample_series_to_reference(dyn['img'], ref_img)
+        img = tictac.image.resample_series_to_reference(dyn['img'], ref_img)
         self.assertEqual(img[0].GetSize(), (512, 512, 132))
         self.assertAlmostEqual(img[0].GetSpacing()[0], 1.269531, places=5)
         self.assertAlmostEqual(img[0].GetSpacing()[1], 1.269531, places=5)
@@ -107,7 +107,7 @@ class TestSeriesRoiMeans(unittest.TestCase):
         dcm_path = os.path.join('test', 'data', '8_3V')
         roi_path = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
-        dyn = tictac.series_roi_means(dcm_path, roi_path)
+        dyn = tictac.image.series_roi_means(dcm_path, roi_path)
 
         tacq_exp = np.array([0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
         self.assertFalse(np.any(dyn['tacq'] - tacq_exp))
@@ -126,7 +126,7 @@ class TestSeriesRoiMeans(unittest.TestCase):
         dcm_path = os.path.join('test', 'data', '8_3V')
         roi_path = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation_2.nrrd')
-        dyn = tictac.series_roi_means(dcm_path, roi_path, resample='roi')
+        dyn = tictac.image.series_roi_means(dcm_path, roi_path, resample='roi')
 
         r1 = dyn['1']
         r2 = dyn['2']
@@ -150,9 +150,9 @@ class TestSeriesRoiMeans(unittest.TestCase):
         dcm_path = os.path.join('test', 'data', '8_3V')
         roi_path = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
-        dyn = tictac.series_roi_means(dcm_path, roi_path,
-                                      labels={'0': 'a',
-                                              '2': '14'})
+        dyn = tictac.image.series_roi_means(dcm_path, roi_path,
+                                            labels={'0': 'a',
+                                                    '2': '14'})
         self.assertTrue('a' in dyn.keys())
         self.assertTrue('1' in dyn.keys())
         self.assertTrue('14' in dyn.keys())
@@ -164,8 +164,8 @@ class TestSeriesRoiMeans(unittest.TestCase):
         dcm_path = os.path.join('test', 'data', '8_3V')
         roi_path = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
-        dyn = tictac.series_roi_means(dcm_path, roi_path,
-                                      ignore=['0', '2'])
+        dyn = tictac.image.series_roi_means(dcm_path, roi_path,
+                                            ignore=['0', '2'])
         self.assertTrue('1' in dyn.keys())
         self.assertFalse('0' in dyn.keys())
         self.assertFalse('2' in dyn.keys())

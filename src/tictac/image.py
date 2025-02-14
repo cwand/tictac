@@ -3,7 +3,7 @@ from collections import defaultdict
 
 import numpy as np
 
-import tictac
+import tictac.core
 import numpy.typing as npt
 from typing import Any, Optional
 
@@ -36,13 +36,14 @@ def load_dynamic_series(dicom_path: str) -> dict[str, Any]:
     acq_arr = []
 
     # Get acquisition time of first image
-    acq0 = tictac.get_acq_datetime(dcm_names[0])
+    acq0 = tictac.core.get_acq_datetime(dcm_names[0])
 
     for name in dcm_names:
         # Load image and read acquisition time of each image and store in list
         img = sitk.ReadImage(name)
         img_arr.append(img)
-        acq_arr.append((tictac.get_acq_datetime(name)-acq0).total_seconds())
+        acq_arr.append(
+            (tictac.core.get_acq_datetime(name)-acq0).total_seconds())
 
     return {'img': img_arr,
             'acq': acq_arr}
@@ -145,7 +146,7 @@ def series_roi_means(series_path: str,
     label_stats_filter = sitk.LabelStatisticsImageFilter()
 
     # Get acquisition time of first image
-    acq0 = tictac.get_acq_datetime(dcm_names[0])
+    acq0 = tictac.core.get_acq_datetime(dcm_names[0])
 
     for name in dcm_names:
         # Load images in order
@@ -161,7 +162,7 @@ def series_roi_means(series_path: str,
         # Find acquisition time and store in list
         res['tacq'] = np.append(
             res['tacq'],
-            (tictac.get_acq_datetime(name) - acq0).total_seconds())
+            (tictac.core.get_acq_datetime(name) - acq0).total_seconds())
 
         # Apply label stats filter and read ROI means
         label_stats_filter.Execute(img, roi)
