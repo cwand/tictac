@@ -93,3 +93,13 @@ Conversely, to resample each of the dynamic images to the ROI space use:
 > python -m tictac img_dir roi.nrrd tac.txt --resample img
 ```
 Either way, the resampling is done by a simple nearest-neighbour interpolator.
+
+### Scale correction
+To apply a scale factor to one of the labels, use the ```--scale``` option. This takes
+three arguments: the label of the data to correct, the label to use as the corrected
+data and the factor:
+```
+> python -m tictac img_dir roi.nrrd tac.txt --scale blood blood2 1.5 --scale brain brain2 1000
+```
+In this example, one could imagine changing the unit from kBq/mL to Bq/mL on the ```brain``` label
+and applying a (rather crude) partial volume correction to the ```blood``` label.
