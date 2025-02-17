@@ -23,6 +23,10 @@ def main(sys_args: list[str]):
                              "physical space of the other")
     parser.add_argument("--labels", nargs="*",
                         help="New labels to print in out file")
+    parser.add_argument("--scale", action='append', nargs=3,
+                        metavar=("label_in", "label_out", "factor"),
+                        help="Apply a scale factor to label_in and save it "
+                             "as label_out")
     parser.add_argument("--ignore", nargs="*",
                         help="List of labels to ignore")
     args = parser.parse_args(sys_args)
@@ -42,6 +46,14 @@ def main(sys_args: list[str]):
         resample=args.resample,
         labels=labels,
         ignore=args.ignore)
+
+    # Apply scales if required
+    if args.scale:
+        for scale in args.scale:
+            factor = float(scale[2])
+            scaled_arr = factor * dyn[scale[0]]
+            dyn[scale[1]] = scaled_arr
+
     tictac.save_table(table=dyn, path=args.out_path)
 
     # Report successful end of program
