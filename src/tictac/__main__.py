@@ -15,9 +15,11 @@ def main(sys_args: list[str]):
     print()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("img_dir", help="Path to dynamic image directory")
-    parser.add_argument("roi_path", help="Path to ROI-file")
-    parser.add_argument("out_path", help="Path to write output file")
+    # parser.add_argument("img_dir", help="Path to dynamic image directory")
+    # parser.add_argument("roi_path", help="Path to ROI-file")
+    # parser.add_argument("out_path", help="Path to write output file")
+    parser.add_argument("-i", help="Path to dynamic image data")
+    parser.add_argument("-o", help="Output path")
     parser.add_argument("--resample", choices=['roi', 'img'],
                         help="Resample either the ROI or the images to the "
                              "physical space of the other")
