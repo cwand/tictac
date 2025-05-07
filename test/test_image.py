@@ -107,7 +107,9 @@ class TestSeriesRoiMeans(unittest.TestCase):
         dcm_path = os.path.join('test', 'data', '8_3V')
         roi_path = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
-        dyn = tictac.image.series_roi_means(dcm_path, roi_path)
+        roi_list = [[roi_path, '1', '1', 'none'],
+                    [roi_path, '2', '2', 'none']]
+        dyn = tictac.image.series_roi_means(dcm_path, roi_list)
 
         tacq_exp = np.array([0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
         self.assertFalse(np.any(dyn['tacq'] - tacq_exp))

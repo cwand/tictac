@@ -70,10 +70,7 @@ def resample_series_to_reference(series: list[sitk.Image],
 
 
 def series_roi_means(series_path: str,
-                     roi_path: str,
-                     resample: Optional[str] = None,
-                     labels: Optional[dict[str, str]] = None,
-                     ignore: Optional[list[str]] = None)\
+                     roi_path: list[list[str]])\
         -> dict[str, npt.NDArray[np.float64]]:
     """Do a lazy calculation of mean image values in a ROI. Lazy in this
     context means that the images are loaded one at a time and the mean values

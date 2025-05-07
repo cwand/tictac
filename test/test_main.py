@@ -17,7 +17,7 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', 'a', 'none'
+                       '--roi', roi_path, '1', 'a', 'none',
                        '--roi', roi_path, '2', 'b', 'none'])
 
         # reassemble outfile into dict:
