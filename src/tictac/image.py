@@ -70,7 +70,7 @@ def resample_series_to_reference(series: list[sitk.Image],
 
 
 def series_roi_means(series_path: str,
-                     roi_path: list[list[str]])\
+                     roi_list: list[list[str]])\
         -> dict[str, npt.NDArray[np.float64]]:
     """Do a lazy calculation of mean image values in a ROI. Lazy in this
     context means that the images are loaded one at a time and the mean values
@@ -110,16 +110,6 @@ def series_roi_means(series_path: str,
     acquisition times are stored in a list under the key 'tacq'.
     """
 
-    # Input sanitation: if no label substitution is needed, the argument is
-    # just an empty dict
-    if labels is None:
-        labels = {}
-
-    # Input sanitation: if no ignoring is needed, the argument is
-    # just an empty list
-    if ignore is None:
-        ignore = []
-
     res: dict[str, npt.NDArray[np.float64]] = defaultdict(
         lambda: np.ndarray(0))
 
@@ -129,15 +119,19 @@ def series_roi_means(series_path: str,
     # Get dicom file names in folder sorted according to acquisition time.
     dcm_names = reader.GetGDCMSeriesFileNames(series_path)
 
-    # Read ROI image
-    roi = sitk.ReadImage(roi_path)
+    # Read in all rois
+    rois = []
+    for roi in roi_list:
+        roi_image = sitk.ReadImage(roi[0])
 
-    # Resample ROI if chosen
-    if resample == 'roi':
-        resampler = sitk.ResampleImageFilter()
-        resampler.SetReferenceImage(sitk.ReadImage(dcm_names[0]))
-        resampler.SetInterpolator(sitk.sitkNearestNeighbor)
-        roi = resampler.Execute(roi)
+        # Resample ROI if chosen
+        if roi[3] == 'roi':
+            resampler = sitk.ResampleImageFilter()
+            resampler.SetReferenceImage(sitk.ReadImage(dcm_names[0]))
+            resampler.SetInterpolator(sitk.sitkNearestNeighbor)
+            roi_image = resampler.Execute(roi_image)
+
+        rois.append(roi_image)
 
     # Prepare label statistics filter
     label_stats_filter = sitk.LabelStatisticsImageFilter()
@@ -148,27 +142,27 @@ def series_roi_means(series_path: str,
     for name in dcm_names:
         # Load images in order
         img = sitk.ReadImage(name)
-
-        # Resample image if chosen
-        if resample == 'img':
-            resampler = sitk.ResampleImageFilter()
-            resampler.SetReferenceImage(roi)
-            resampler.SetInterpolator(sitk.sitkNearestNeighbor)
-            img = resampler.Execute(img)
+        resampled_img = None  # Placeholder for resampled img if needed
 
         # Find acquisition time and store in list
         res['tacq'] = np.append(
             res['tacq'],
             (tictac.core.get_acq_datetime(name) - acq0).total_seconds())
 
-        # Apply label stats filter and read ROI means
-        label_stats_filter.Execute(img, roi)
-        for label in label_stats_filter.GetLabels():
-            if str(label) in ignore:
-                continue
+        for i, roi in enumerate(roi_list):
+
+            # Resample image if chosen
+            if roi[3] == 'img' and (resampled_img is None or not rois[i].IsSameImageGeometryAs(resampled_img)):
+                resampler = sitk.ResampleImageFilter()
+                resampler.SetReferenceImage(rois[i])
+                resampler.SetInterpolator(sitk.sitkNearestNeighbor)
+                resampled_img = resampler.Execute(img)
+
+            # Apply label stats filter and read ROI means
+            label_stats_filter.Execute(img, rois[i])
+
             # Append the mean value to the list for each label.
-            res_key = labels.get(str(label), str(label))
-            res[res_key] = np.append(res[res_key],
-                                     label_stats_filter.GetMean(label))
+            res[roi[2]] = np.append(res[roi[2]],
+                                     label_stats_filter.GetMean(int(roi[1])))
 
     return res
