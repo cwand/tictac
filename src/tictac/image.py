@@ -152,14 +152,24 @@ def series_roi_means(series_path: str,
         for i, roi in enumerate(roi_list):
 
             # Resample image if chosen
-            if roi[3] == 'img' and (resampled_img is None or not rois[i].IsSameImageGeometryAs(resampled_img)):
-                resampler = sitk.ResampleImageFilter()
-                resampler.SetReferenceImage(rois[i])
-                resampler.SetInterpolator(sitk.sitkNearestNeighbor)
-                resampled_img = resampler.Execute(img)
+            if roi[3] == 'img':
+                if resampled_img is None or not rois[i].IsSameImageGeometryAs(resampled_img):
+                    # Image needs to be resampled
+                    print(f'HI {name}!')
+                    resampler = sitk.ResampleImageFilter()
+                    resampler.SetReferenceImage(rois[i])
+                    resampler.SetInterpolator(sitk.sitkNearestNeighbor)
+                    resampled_img = resampler.Execute(img)
+                else:
+                    print(f'Skipped! {name}')
 
-            # Apply label stats filter and read ROI means
-            label_stats_filter.Execute(img, rois[i])
+                # Apply label stats filter on resampled img and read ROI means
+                label_stats_filter.Execute(resampled_img, rois[i])
+
+            else:
+
+                # Apply label stats filter on original img and read ROI means
+                label_stats_filter.Execute(img, rois[i])
 
             # Append the mean value to the list for each label.
             res[roi[2]] = np.append(res[roi[2]],
