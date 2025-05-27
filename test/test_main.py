@@ -7,8 +7,6 @@ from tictac import __main__
 
 class TestMainFunction(unittest.TestCase):
 
-
-
     def test_main_simple(self):
 
         img_dir = os.path.join('test', 'data', '8_3V')
@@ -54,8 +52,9 @@ class TestMainFunction(unittest.TestCase):
                                 'Segmentation.nrrd')
         out_path = os.path.join('test', 'tac.txt')
 
-        __main__.main([img_dir, roi_path, out_path,
-                       "--labels", "1,stuff", "2,stoff"])
+        __main__.main(['-i', img_dir, '-o', out_path,
+                       '--roi', roi_path, '1', 'stuff', 'none',
+                       '--roi', roi_path, '2', 'stoff', 'none'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -87,8 +86,8 @@ class TestMainFunction(unittest.TestCase):
                                 'Segmentation.nrrd')
         out_path = os.path.join('test', 'tac.txt')
 
-        __main__.main([img_dir, roi_path, out_path,
-                       "--ignore", "1", "2"])
+        __main__.main(['-i', img_dir, '-o', out_path,
+                       '--roi', roi_path, '2', '2', 'none'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -104,9 +103,9 @@ class TestMainFunction(unittest.TestCase):
         for i in range(len(header_cols)):
             data_dict[header_cols[i]] = data[:, i]
 
-        self.assertTrue("0" in data_dict)
+        self.assertTrue("2" in data_dict)
         self.assertFalse("1" in data_dict)
-        self.assertFalse("2" in data_dict)
+        self.assertFalse("0" in data_dict)
 
     def test_main_resample_roi(self):
 
@@ -115,8 +114,9 @@ class TestMainFunction(unittest.TestCase):
                                 'Segmentation_2.nrrd')
         out_path = os.path.join('test', 'tac.txt')
 
-        __main__.main([img_dir, roi_path, out_path,
-                       "--resample", "roi"])
+        __main__.main(['-i', img_dir, '-o', out_path,
+                       '--roi', roi_path, '1', '1', 'roi',
+                       '--roi', roi_path, '2', '2', 'roi'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -145,8 +145,9 @@ class TestMainFunction(unittest.TestCase):
                                 'Segmentation_2.nrrd')
         out_path = os.path.join('test', 'tac.txt')
 
-        __main__.main([img_dir, roi_path, out_path,
-                       "--resample", "img"])
+        __main__.main(['-i', img_dir, '-o', out_path,
+                       '--roi', roi_path, '1', '1', 'img',
+                       '--roi', roi_path, '2', '2', 'img'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -175,9 +176,12 @@ class TestMainFunction(unittest.TestCase):
                                 'Segmentation.nrrd')
         out_path = os.path.join('test', 'tac.txt')
 
-        __main__.main([img_dir, roi_path, out_path,
+        __main__.main(['-i', img_dir, '-o', out_path,
+                       '--roi', roi_path, '1', '1', 'none',
+                       '--roi', roi_path, '2', '2', 'none',
                        "--scale", "1", "1a", "2.0",
-                       "--scale", "2", "2a", "0.5"])
+                       "--scale", "2", "2a", "0.5"
+                       ])
 
         # reassemble outfile into dict:
         with open(out_path) as f:

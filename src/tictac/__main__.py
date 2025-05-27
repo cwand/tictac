@@ -22,13 +22,13 @@ def main(sys_args: list[str]):
     parser.add_argument("-o", help="Output path")
     parser.add_argument("--roi", nargs=4, action="append",
                         metavar=("PATH", "VOX_VALUE", "LABEL", "RESAMPLE"),
-                        help="Define a ROI to extract. PATH is the path to the "
-                             "ROI-file. VOX_VALUE is the value of the ROI "
-                             "voxels in the file. LABEL is the name of the ROI "
-                             "in the output file. RESAMPLE states whether to "
-                             "resample either the ROI or the image data before "
-                             "extraction (possible values are 'img', 'roi' or "
-                             "'none'.")
+                        help="Define a ROI to extract. PATH is the path to "
+                             "the ROI-file. VOX_VALUE is the value of the ROI "
+                             "voxels in the file. LABEL is the name of the "
+                             "ROI in the output file. RESAMPLE states whether "
+                             "to resample either the ROI or the image data "
+                             "before extraction (possible values are 'img', "
+                             "'roi' or 'none'.")
     # parser.add_argument("--resample", choices=['roi', 'img'],
     #                     help="Resample either the ROI or the images to the "
     #                          "physical space of the other")
@@ -42,14 +42,10 @@ def main(sys_args: list[str]):
     #                     help="List of labels to ignore")
     args = parser.parse_args(sys_args)
 
-    print(args.roi)
-
     # Run ROI-means code
     dyn = tictac.series_roi_means(
-        series_path=args.img_dir,
-        roi_path=args.roi_path,
-        resample=args.resample,
-        ignore=args.ignore)
+        series_path=args.i,
+        roi_list=args.roi)
 
     # Apply scales if required
     if args.scale:
@@ -58,7 +54,7 @@ def main(sys_args: list[str]):
             scaled_arr = factor * dyn[scale[0]]
             dyn[scale[1]] = scaled_arr
 
-    tictac.save_table(table=dyn, path=args.out_path)
+    tictac.save_table(table=dyn, path=args.o)
 
     # Report successful end of program
     run_time = (time.time_ns() - start_time) * 1e-9

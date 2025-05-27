@@ -142,7 +142,9 @@ def series_roi_means(series_path: str,
     for name in dcm_names:
         # Load images in order
         img = sitk.ReadImage(name)
-        resampled_img = None  # Placeholder for resampled img if needed
+
+        # Placeholder for resampled img if needed
+        resampled_img: Optional[sitk.Image] = None
 
         # Find acquisition time and store in list
         res['tacq'] = np.append(
@@ -153,15 +155,13 @@ def series_roi_means(series_path: str,
 
             # Resample image if chosen
             if roi[3] == 'img':
-                if resampled_img is None or not rois[i].IsSameImageGeometryAs(resampled_img):
+                if (resampled_img is None or
+                        not rois[i].IsSameImageGeometryAs(resampled_img)):
                     # Image needs to be resampled
-                    print(f'HI {name}!')
                     resampler = sitk.ResampleImageFilter()
                     resampler.SetReferenceImage(rois[i])
                     resampler.SetInterpolator(sitk.sitkNearestNeighbor)
                     resampled_img = resampler.Execute(img)
-                else:
-                    print(f'Skipped! {name}')
 
                 # Apply label stats filter on resampled img and read ROI means
                 label_stats_filter.Execute(resampled_img, rois[i])
@@ -173,6 +173,6 @@ def series_roi_means(series_path: str,
 
             # Append the mean value to the list for each label.
             res[roi[2]] = np.append(res[roi[2]],
-                                     label_stats_filter.GetMean(int(roi[1])))
+                                    label_stats_filter.GetMean(int(roi[1])))
 
     return res
