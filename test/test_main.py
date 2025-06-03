@@ -208,6 +208,42 @@ class TestMainFunction(unittest.TestCase):
                                0.0727437])
         self.assertTrue(np.all((r2 - r2_exp) < 0.1))
 
+    def test_main_different_paths(self):
+
+        img_dir = os.path.join('test', 'data', '8_3V')
+        roi_path1 = os.path.join('test', 'data', '8_3V_seg',
+                                 'Segmentation.nrrd')
+        roi_path2 = os.path.join('test', 'data', '8_3V_seg',
+                                 'Segmentation_2.nrrd')
+        out_path = os.path.join('test', 'tac.txt')
+
+        __main__.main(['-i', img_dir, '-o', out_path,
+                       '--roi', roi_path1, '1', 'a', 'none',
+                       '--roi', roi_path2, '1', 'b', 'roi'
+                       ])
+
+        # reassemble outfile into dict:
+        with open(out_path) as f:
+            header = f.readline()
+        header_cols = header.split()
+        header_cols = header_cols[1:]
+
+        # Load data (excluding header)
+        data = np.loadtxt(out_path)
+
+        # Put data into a dict object with correct labels
+        data_dict: dict[str, npt.NDArray[np.float64]] = {}
+        for i in range(len(header_cols)):
+            data_dict[header_cols[i]] = data[:, i]
+
+        r1 = data_dict['a']
+        r1_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,
+                           12058.9, 1277.01, 13.4822, 0.748028, 0.0])
+        self.assertTrue(np.all(abs(r1 - r1_exp) < 0.1))
+
+        r2 = data_dict['b']
+        self.assertAlmostEqual(float(r2[3]), 13473.5, places=1)
+
     def tearDown(self):
         if os.path.exists(os.path.join('test', 'tac.txt')):
             os.remove(os.path.join('test', 'tac.txt'))

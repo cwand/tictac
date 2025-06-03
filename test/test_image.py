@@ -117,12 +117,12 @@ class TestSeriesRoiMeans(unittest.TestCase):
         r1 = dyn['1']
         r1_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,
                            12058.9, 1277.01, 13.4822, 0.748028, 0.0])
-        self.assertTrue(np.all((r1 - r1_exp) < 0.1))
+        self.assertTrue(np.all(abs(r1 - r1_exp) < 0.1))
 
         r2 = dyn['2']
         r2_exp = np.array([31.3157, 3501.54, 33128.1, 38544.1,
                            9529.26, 642.525, 2.57748, 0.345963, 0.0727437])
-        self.assertTrue(np.all((r2 - r2_exp) < 0.1))
+        self.assertTrue(np.all(abs(r2 - r2_exp) < 0.1))
 
     def test_series_roi_means_8_3V_resample_roi(self):
         dcm_path = os.path.join('test', 'data', '8_3V')
@@ -165,4 +165,27 @@ class TestSeriesRoiMeans(unittest.TestCase):
         r2 = dyn['a']
         r2_exp = np.array([31.3157, 3501.54, 33128.1, 38544.1,
                            9529.26, 642.525, 2.57748, 0.345963, 0.0727437])
-        self.assertTrue(np.all((r2 - r2_exp) < 0.1))
+        self.assertTrue(np.all(abs(r2 - r2_exp) < 0.1))
+
+    def test_different_roi_paths(self):
+        dcm_path = os.path.join('test', 'data', '8_3V')
+        roi_path1 = os.path.join(
+            'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
+        roi_path2 = os.path.join(
+            'test', 'data', '8_3V_seg', 'Segmentation_2.nrrd')
+        roi_list = [[roi_path1, '1', 'a', 'none'],
+                    [roi_path2, '1', 'b', 'roi']]
+
+        dyn = tictac.image.series_roi_means(dcm_path, roi_list)
+
+        r1 = dyn['a']
+        r1_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,
+                           12058.9, 1277.01, 13.4822, 0.748028, 0.0])
+        self.assertTrue(np.all(abs(r1 - r1_exp) < 0.1))
+
+        r2 = dyn['b']
+        self.assertAlmostEqual(float(r2[3]), 13473.5, places=1)
+
+
+
+

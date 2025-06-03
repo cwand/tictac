@@ -15,9 +15,6 @@ def main(sys_args: list[str]):
     print()
 
     parser = argparse.ArgumentParser()
-    # parser.add_argument("img_dir", help="Path to dynamic image directory")
-    # parser.add_argument("roi_path", help="Path to ROI-file")
-    # parser.add_argument("out_path", help="Path to write output file")
     parser.add_argument("-i", help="Path to dynamic image data")
     parser.add_argument("-o", help="Output path")
     parser.add_argument("--roi", nargs=4, action="append",
@@ -29,17 +26,10 @@ def main(sys_args: list[str]):
                              "to resample either the ROI or the image data "
                              "before extraction (possible values are 'img', "
                              "'roi' or 'none'.")
-    # parser.add_argument("--resample", choices=['roi', 'img'],
-    #                     help="Resample either the ROI or the images to the "
-    #                          "physical space of the other")
-    # parser.add_argument("--labels", nargs="*",
-    #                     help="New labels to print in out file")
     parser.add_argument("--scale", action='append', nargs=3,
                         metavar=("label_in", "label_out", "factor"),
                         help="Apply a scale factor to label_in and save it "
                              "as label_out")
-    # parser.add_argument("--ignore", nargs="*",
-    #                     help="List of labels to ignore")
     args = parser.parse_args(sys_args)
 
     # Run ROI-means code
