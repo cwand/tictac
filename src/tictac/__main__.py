@@ -15,8 +15,12 @@ def main(sys_args: list[str]):
     print()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", help="Path to dynamic image data")
-    parser.add_argument("-o", help="Output path")
+    parser.add_argument("-i", metavar="IMG_PATH",
+                        help="Path to dynamic image data",
+                        required=True)
+    parser.add_argument("-o", metavar="OUT_PATH",
+                        help="Output path",
+                        required=True)
     parser.add_argument("--roi", nargs=4, action="append",
                         metavar=("PATH", "VOX_VALUE", "LABEL", "RESAMPLE"),
                         help="Define a ROI to extract. PATH is the path to "
