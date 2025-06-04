@@ -31,7 +31,7 @@ Install tictac and required dependencies
 If everything has gone right, you should be able to run tictac
 ```
 > python -m tictac
-Starting TICTAC 1.0.1
+Starting TICTAC 2.0.1
 
 ...
 __main__.py: error: the following arguments are required: -i, -o
@@ -56,34 +56,39 @@ To get the mean voxel values in each ROI for each time frame, we run tictac:
 ```
 > python -m tictac -i img_dir --roi roi1.nrrd 1 roi_name none -o tac.txt
 ```
+The first argument ```-i img_dir``` specifies the path to the dynamic image
+data. The second argument ```--roi roi1.nrrd 1 roi_name none``` specifies
+the ROI, which is extracted with the following options:
+* ```roi1.nrrd``` specifies the path to the ROI image file
+* ```1``` specifies that the ROI voxel value is ```1```
+* ```roi_name``` is the name the ROI will have in the output file
+* ```none``` specifies that no resampling should be done to the ROI image.
+
+In case more than one ROI is wanted, each one gets its own ```--roi ...```.
+
 The final argument to tictac (```-o```) is the path to the output file.
 
 The output file is structured into columns:
 * The first column has the header ```tacq``` and contains the time-stamps in seconds from
   the first image.
-* Each label in the ROI labelmap file has a column, and for each time-stamp the corresponding
+* Each ROI has a column, and for each time-stamp the corresponding
   mean voxel intensity value is calculated.
 
 ### Resampling
 If the dynamic images and the ROI are not in the same physical space (e.g. from different
-examinations or different modalities), it is necessary to resample one or the other. This can
-be done with the ```--resample``` argument.
-To resample the ROI to the dynamic image space use:
-```
-> python -m tictac img_dir roi.nrrd tac.txt --resample roi
-```
-Conversely, to resample each of the dynamic images to the ROI space use:
-```
-> python -m tictac img_dir roi.nrrd tac.txt --resample img
-```
-Either way, the resampling is done by a simple nearest-neighbour interpolator.
+examinations or different modalities), it is necessary to resample one or the other.
+In the ```--roi``` argument the resampling strategy is set as the fourth value, and it can
+be either
+* ```none``` (no resampling, so images and ROI must be in the same physical space)
+* ```roi``` (the ROI is resampled to the dynamic image space using nearest neighbour interpolation)
+* ```img``` (the dynamic images are resampled to the ROI image space using nearest neighbour interpolation)
 
 ### Scale correction
 To apply a scale factor to one of the labels, use the ```--scale``` option. This takes
 three arguments: the label of the data to correct, the label to use as the corrected
 data and the factor:
 ```
-> python -m tictac img_dir roi.nrrd tac.txt --scale blood blood2 1.5 --scale brain brain2 1000
+> python -m tictac -i img_dir --roi roi_blood.nrrd 1 blood none --roi roi_brain.nrrd 1 brain none -o tac.txt --scale blood blood2 1.5 --scale brain brain2 1000
 ```
 In this example, one could imagine changing the unit from kBq/mL to Bq/mL on the ```brain``` label
 and applying a (rather crude) partial volume correction to the ```blood``` label.
