@@ -92,3 +92,7 @@ data and the factor:
 ```
 In this example, one could imagine changing the unit from kBq/mL to Bq/mL on the ```brain``` label
 and applying a (rather crude) partial volume correction to the ```blood``` label.
+
+### Progress bar
+As default tictac shows a progress bar. This behavoiur can be turned off (e.g. if
+piping stdout to a file) by setting the argument ```--hideprogress```

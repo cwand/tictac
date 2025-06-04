@@ -31,7 +31,8 @@ classifiers = [
 ]
 dependencies = [
 	'numpy',
-	'SimpleITK'
+	'SimpleITK',
+	'tqdm'
 ]
 
 [project.urls]
