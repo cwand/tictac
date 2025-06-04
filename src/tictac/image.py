@@ -2,6 +2,7 @@ import SimpleITK as sitk
 from collections import defaultdict
 
 import numpy as np
+from tqdm import tqdm
 
 import tictac.core
 import numpy.typing as npt
@@ -70,7 +71,8 @@ def resample_series_to_reference(series: list[sitk.Image],
 
 
 def series_roi_means(series_path: str,
-                     roi_list: list[list[str]])\
+                     roi_list: list[list[str]],
+                     progress: bool = True)\
         -> dict[str, npt.NDArray[np.float64]]:
     """Do a lazy calculation of mean image values in a ROI. Lazy in this
     context means that the images are loaded one at a time and the mean values
@@ -134,7 +136,7 @@ def series_roi_means(series_path: str,
     # Get acquisition time of first image
     acq0 = tictac.core.get_acq_datetime(dcm_names[0])
 
-    for name in dcm_names:
+    for name in tqdm(dcm_names, disable=(not progress)):
         # Load images in order
         img = sitk.ReadImage(name)
 

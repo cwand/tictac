@@ -34,12 +34,15 @@ def main(sys_args: list[str]):
                         metavar=("label_in", "label_out", "factor"),
                         help="Apply a scale factor to label_in and save it "
                              "as label_out")
+    parser.add_argument("--hideprogress", action='store_false',
+                        help="Hide progress bar")
     args = parser.parse_args(sys_args)
 
     # Run ROI-means code
     dyn = tictac.series_roi_means(
         series_path=args.i,
-        roi_list=args.roi)
+        roi_list=args.roi,
+        progress=args.hideprogress)
 
     # Apply scales if required
     if args.scale:
