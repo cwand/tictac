@@ -185,7 +185,3 @@ class TestSeriesRoiMeans(unittest.TestCase):
 
         r2 = dyn['b']
         self.assertAlmostEqual(float(r2[3]), 13473.5, places=1)
-
-
-
-

@@ -78,11 +78,17 @@ def series_roi_means(series_path: str,
     loaded. This saves some memory usage compared to loading all images in a
     list and then computing ROI-means, but on the other hand no manipulation
     of the images can be performed after the call of this function.
-    The images or the ROI can be resampled before calculation of the mean by
-    using the resample argument. To resample the ROI to the size of the images
-    set resample='roi', and to resample the images to the ROI space use
-    resample='img'. In either case the resampling is done using
-    nearest-neighbour values.
+    The ROIs are given in a list. Each ROI in the list is another list of four
+    string values:
+     - roi[0] is the path to the ROI image file
+     - roi[1] is the voxel value (label) of the ROI in the image file
+     - roi[2] is the name the ROI-data should have in the output file
+     - roi[3] defines the resampling strategy in case the ROI and dynamic
+       images are not in the same physical space. This can be either "none"
+       (no resampling, the images must be in identical physical space), "img"
+       (the dynamic images should be resampled to the ROI image space), "roi"
+       (the ROI image should be resampled to the dynamic image physical space).
+    In either case the resampling is done using nearest-neighbour values.
     The function returns a dictionary object. The keys in the object are
     'tacq' which stores a list of acquisition times (relative to the first
     image) and the labels of the ROI (integers) (see the keyword argument
@@ -91,18 +97,7 @@ def series_roi_means(series_path: str,
 
     Arguments:
     series_path --  The path to the images series dicom files
-    roi_path    --  The path to the ROI dicom files
-    resample    --  The resampling strategy. Allowed values are None (no
-                    resampling, default value), 'roi' (resample ROI to image
-                    space) or 'img' (resample images to ROI space).
-    labels      --  Choose different labels for the resulting dict object. By
-                    default, the label values in the ROI image is chosen. A
-                    dictionary can be inserted here to replace those values. If
-                    for example the ROI label value '1' should be replaced with
-                    'left' and the value '2' should be replaced with 'right'
-                    use the argument labels={'1': 'left', '2': 'right'}.
-    ignore      --  List of labels to ignore when computing means. Default is
-                    None, in which case all labels will be computed.
+    roi_list    --  The lists of ROIs to compute
 
     Return value:
     A dict object with ROI labels as keys and a list with ROI mean values for
