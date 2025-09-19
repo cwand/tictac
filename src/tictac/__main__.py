@@ -34,6 +34,14 @@ def main(sys_args: list[str]):
                         metavar=("label_in", "label_out", "factor"),
                         help="Apply a scale factor to label_in and save it "
                              "as label_out")
+    parser.add_argument("--pvc_bard", nargs=4,
+                        metavar=("ROI_LABEL", "BKG_LABEL",
+                                 "ROI_DIAMETER", "TABLE_FILE"),
+                        help="BARD partial volume correction. Corrects the "
+                             "ROI activity based on the diameter of the ROI "
+                             "and the background activity. Correction is "
+                             "interpolated from a file of measured "
+                             "PVC-factors.")
     parser.add_argument("--hideprogress", action='store_false',
                         help="Hide progress bar")
     args = parser.parse_args(sys_args)
