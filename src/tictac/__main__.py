@@ -3,6 +3,7 @@ import tictac
 import sys
 import importlib.metadata
 import time
+import pandas as pd
 
 
 def main(sys_args: list[str]):
@@ -34,9 +35,9 @@ def main(sys_args: list[str]):
                         metavar=("label_in", "label_out", "factor"),
                         help="Apply a scale factor to label_in and save it "
                              "as label_out")
-    parser.add_argument("--pvc_bard", nargs=4,
+    parser.add_argument("--pvc_bard", action='append', nargs=5,
                         metavar=("ROI_LABEL", "BKG_LABEL",
-                                 "ROI_DIAMETER", "TABLE_FILE"),
+                                 "ROI_DIAMETER", "TABLE_FILE", "LABEL_OUT"),
                         help="BARD partial volume correction. Corrects the "
                              "ROI activity based on the diameter of the ROI "
                              "and the background activity. Correction is "
@@ -46,20 +47,39 @@ def main(sys_args: list[str]):
                         help="Hide progress bar")
     args = parser.parse_args(sys_args)
 
+    print("Extracting TACs...")
     # Run ROI-means code
     dyn = tictac.series_roi_means(
         series_path=args.i,
         roi_list=args.roi,
         progress=args.hideprogress)
+    print()
 
     # Apply scales if required
     if args.scale:
         for scale in args.scale:
+            print(f'Applying scaling to {scale[0]}')
             factor = float(scale[2])
             scaled_arr = factor * dyn[scale[0]]
             dyn[scale[1]] = scaled_arr
+        print()
 
+    # Apply BARD-PVC if required
+    if args.pvc_bard:
+        for bard in args.pvc_bard:
+            print(f'Applying BARD-PVC to {bard[0]}')
+            diameter = float(bard[2])
+            pvc_table = pd.read_csv(bard[3])
+            pvc_corr = tictac.bard_pvc(aorta=dyn[bard[0]],
+                                       bkg=dyn[bard[1]],
+                                       diameter=diameter,
+                                       table=pvc_table)
+            dyn[bard[4]] = pvc_corr
+        print()
+
+    print(f'Saving results...')
     tictac.save_table(table=dyn, path=args.o)
+    print()
 
     # Report successful end of program
     run_time = (time.time_ns() - start_time) * 1e-9

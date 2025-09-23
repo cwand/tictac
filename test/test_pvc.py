@@ -4,6 +4,7 @@ from tictac import bard_pvc
 import pandas as pd
 import numpy as np
 
+
 class TestBardPVC(unittest.TestCase):
 
     def test_on_grid(self):
@@ -32,7 +33,6 @@ class TestBardPVC(unittest.TestCase):
                        bkg=bkg,
                        diameter=diameter,
                        table=tab)
-        print(act)
         self.assertTrue(np.all(abs(exp - act) < 0.00001))
 
     def test_interpolate_diameter(self):
@@ -47,7 +47,6 @@ class TestBardPVC(unittest.TestCase):
                        bkg=bkg,
                        diameter=diameter,
                        table=tab)
-        print(act)
         self.assertTrue(np.all(abs(exp - act) < 0.00001))
 
     def test_ltunit_ratio(self):
@@ -62,5 +61,4 @@ class TestBardPVC(unittest.TestCase):
                        bkg=bkg,
                        diameter=diameter,
                        table=tab)
-        print(act)
         self.assertTrue(np.all(abs(exp - act) < 0.00001))

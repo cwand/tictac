@@ -8,8 +8,6 @@ import tictac.core
 
 class TestGetAcqDateTime(unittest.TestCase):
 
-
-
     def test_acq_datetime_8_3V_5(self):
         dcm_path = os.path.join(
             'test', 'data', '8_3V',

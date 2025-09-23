@@ -244,6 +244,37 @@ class TestMainFunction(unittest.TestCase):
         r2 = data_dict['b']
         self.assertAlmostEqual(float(r2[3]), 13473.5, places=1)
 
+    def test_main_bard_pvc(self):
+        img_dir = os.path.join('test', 'data', '8_3V')
+        roi_path = os.path.join('test', 'data', '8_3V_seg',
+                                'Segmentation.nrrd')
+        out_path = os.path.join('test', 'tac.txt')
+        bard_path = os.path.join('test', 'data', 'bard_test.txt')
+
+        __main__.main(['-i', img_dir, '-o', out_path,
+                       '--roi', roi_path, '1', 'a', 'none',
+                       '--roi', roi_path, '2', 'b', 'none',
+                       '--pvc_bard', 'a', 'b', '15.0', bard_path, 'acorr'])
+
+        # reassemble outfile into dict:
+        with open(out_path) as f:
+            header = f.readline()
+        header_cols = header.split()
+        header_cols = header_cols[1:]
+
+        # Load data (excluding header)
+        data = np.loadtxt(out_path)
+
+        # Put data into a dict object with correct labels
+        data_dict: dict[str, npt.NDArray[np.float64]] = {}
+        for i in range(len(header_cols)):
+            data_dict[header_cols[i]] = data[:, i]
+
+        acorr = data_dict['acorr']
+        acorr_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,
+                              13745.33, 1678.161, 22.80078, 0.999011, 0.0])
+        self.assertTrue(np.all(abs(acorr - acorr_exp) < 0.1))
+
     def tearDown(self):
         if os.path.exists(os.path.join('test', 'tac.txt')):
             os.remove(os.path.join('test', 'tac.txt'))
