@@ -29,7 +29,7 @@ def series_roi_means(series_path: str,
 
 # From pvc.py
 
-def bard_pvc(aorta: float,
-             bkg: float,
+def bard_pvc(aorta: npt.NDArray[np.float64],
+             bkg: npt.NDArray[np.float64],
              diameter: float,
              table: DataFrame) -> float: ...

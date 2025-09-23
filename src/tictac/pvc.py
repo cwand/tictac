@@ -1,23 +1,23 @@
 from pandas import DataFrame
 import numpy as np
+import numpy.typing as npt
 from scipy.interpolate import RegularGridInterpolator
 
-def bard_pvc(aorta: float,
-             bkg: float,
+def bard_pvc(aorta: npt.NDArray[np.float64],
+             bkg: npt.NDArray[np.float64],
              diameter: float,
-             table: DataFrame) -> float:
+             table: DataFrame) -> npt.NDArray[np.float64]:
 
-    # Convert to numpy arrays:
     ds = np.array(table.columns.astype(float).tolist())
-    print(ds)
     rs = np.array(table.index.astype(float).tolist())
-    print(rs)
-
     cs = table.to_numpy()
-    print(cs)
+    interp = RegularGridInterpolator((rs, ds), cs, method='linear')
+    pts = np.array([[r, diameter] for r in rs])
 
-    interp = RegularGridInterpolator((ds, rs), cs, method='linear')
-    pt = np.array([diameter, aorta/bkg])
-    c = interp(pt)
+    tab_meas_ratios = interp(pts)
+    tab_true_ratios = np.array(table.index.astype(float).tolist())
 
-    return aorta / c[0]
+    ratios = aorta / bkg
+    true_ratios = np.interp(ratios, tab_meas_ratios, tab_true_ratios)
+
+    return true_ratios * bkg
