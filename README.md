@@ -93,6 +93,35 @@ data and the factor:
 In this example, one could imagine changing the unit from kBq/mL to Bq/mL on the ```brain``` label
 and applying a (rather crude) partial volume correction to the ```blood``` label.
 
+### Partial Volume Correction
+
+At this point, only one partial volume correction routine is implemented in
+tictac:
+
+#### BARD
+
+BARD (Background-Aorta Ratio and Diameter) PVC is a routine for correcting
+the signal in an Aorta ROI for Partial Volume Effects.
+The assumption behind BARD is that the ratio of the aorta signal to the
+background signal will be closer to unity than the true ratio, since the
+partial volume effect will cause some of the aorta signal to spill out into
+the background. This effect will be more severe the smaller the aorta.
+If we measure a phantom with known activities which simulates an aorta in a 
+background and compute the measured ratio, we can interpolate between measured
+points to do the process in reverse: taking a measured ratio and find out what
+the true ratio must have been given the diameter of the aorta.
+
+To use this routine in tictac, we use the ```--pvc_bard``` option:
+```
+> python -m tictac -i img_dir --roi roi_aorta.nrrd 1 aorta none --roi roi_bkg.nrrd 1 bkg none -o tac.txt --pvc_bard aorta bkg 21 bard_table.txt aorta_bard
+```
+The arguments to this option are (in order):
+* The label of the aorta ROI
+* The label of the background ROI
+* The diameter of the aorta
+* A path to the file containing measured ratios
+* The label to use for the corrected TAC
+
 ### Progress bar
 As default tictac shows a progress bar. This behavoiur can be turned off (e.g. if
 piping stdout to a file) by setting the argument ```--hideprogress```
