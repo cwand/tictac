@@ -3,6 +3,7 @@ from datetime import datetime
 import numpy.typing as npt
 import numpy as np
 from typing import Any, Optional
+from pandas import DataFrame
 
 
 # From core.py
@@ -24,3 +25,11 @@ def series_roi_means(series_path: str,
                      roi_list: list[list[str]],
                      progress: bool = ...)\
         -> dict[str, npt.NDArray[np.float64]]: ...
+
+
+# From pvc.py
+
+def bard_pvc(aorta: npt.NDArray[np.float64],
+             bkg: npt.NDArray[np.float64],
+             diameter: float,
+             table: DataFrame) -> npt.NDArray[np.float64]: ...

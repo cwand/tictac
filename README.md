@@ -93,6 +93,51 @@ data and the factor:
 In this example, one could imagine changing the unit from kBq/mL to Bq/mL on the ```brain``` label
 and applying a (rather crude) partial volume correction to the ```blood``` label.
 
+### Partial Volume Correction
+
+At this point, only one partial volume correction routine is implemented in
+tictac:
+
+#### BARD
+
+BARD (Background-Aorta Ratio and Diameter) PVC is a routine for correcting
+the signal in an Aorta ROI for Partial Volume Effects.
+The assumption behind BARD is that the ratio of the aorta signal to the
+background signal will be closer to unity than the true ratio, since the
+partial volume effect will cause some of the aorta signal to spill out into
+the background. This effect will be more severe the smaller the aorta.
+If we measure a phantom with known activities which simulates an aorta in a 
+background and compute the measured ratio, we can interpolate between measured
+points to do the process in reverse: taking a measured ratio and find out what
+the true ratio must have been given the diameter of the aorta.
+
+To use this routine in tictac, we use the ```--pvc_bard``` option:
+```
+> python -m tictac -i img_dir --roi roi_aorta.nrrd 1 aorta none --roi roi_bkg.nrrd 1 bkg none -o tac.txt --pvc_bard aorta bkg 21 bard_table.txt aorta_bard
+```
+The arguments to this option are (in order):
+* The label of the aorta ROI
+* The label of the background ROI
+* The diameter of the aorta
+* A path to the file containing measured ratios
+* The label to use for the corrected TAC
+
+The file with measured ratios must be formatted with comma-separated values,
+like this (```#``` indicates comments):
+```
+       10.0, 20.0, 30.0, 40.0   # First line is known diameters
+0.0,    0.0,  0.0,  0.0,  0.0
+1.0,    1.0,  1.0,  1.0,  1.0
+2.0,    1.5,  1.7,  1.8,  1.9   # First value in following lines is known aorta:background ratio
+5.0,    3.0,  4.0,  4.3,  4.5   # Following values are measured ratio for each diameter
+10.0,   5.0,  6.5,  7.0,  7.5
+100.0, 40.0, 80.0, 82.0, 85.0
+```
+In the example above, we have inserted two lines with a known ratio of 0 and 1
+in the beginning and specified no correction. This can be necessary, since
+there will be no extrapolation. If a ratio to correct falls outside the range
+of measured ratios, an error will occur and the program will stop.
+
 ### Progress bar
 As default tictac shows a progress bar. This behavoiur can be turned off (e.g. if
 piping stdout to a file) by setting the argument ```--hideprogress```
