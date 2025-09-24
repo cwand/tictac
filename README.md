@@ -122,6 +122,22 @@ The arguments to this option are (in order):
 * A path to the file containing measured ratios
 * The label to use for the corrected TAC
 
+The file with measured ratios must be formatted with comma-separated values,
+like this (```#``` indicates comments):
+```
+       10.0, 20.0, 30.0, 40.0   # First line is known diameters
+0.0,    0.0,  0.0,  0.0,  0.0
+1.0,    1.0,  1.0,  1.0,  1.0
+2.0,    1.5,  1.7,  1.8,  1.9   # First value in following lines is known aorta:background ratio
+5.0,    3.0,  4.0,  4.3,  4.5   # Following values are measured ratio for each diameter
+10.0,   5.0,  6.5,  7.0,  7.5
+100.0, 40.0, 80.0, 82.0, 85.0
+```
+In the example above, we have inserted two lines with a known ratio of 0 and 1
+in the beginning and specified no correction. This can be necessary, since
+there will be no extrapolation. If a ratio to correct falls outside the range
+of measured ratios, an error will occur and the program will stop.
+
 ### Progress bar
 As default tictac shows a progress bar. This behavoiur can be turned off (e.g. if
 piping stdout to a file) by setting the argument ```--hideprogress```

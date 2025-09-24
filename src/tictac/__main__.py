@@ -77,7 +77,7 @@ def main(sys_args: list[str]):
             dyn[bard[4]] = pvc_corr
         print()
 
-    print(f'Saving results...')
+    print("Saving results...")
     tictac.save_table(table=dyn, path=args.o)
     print()
 
