@@ -101,15 +101,15 @@ class TestResampleSeriesToReference(unittest.TestCase):
         self.assertEqual(img[8].GetDimension(), 3)
 
 
-class TestSeriesRoiMeans(unittest.TestCase):
+class TestSeriesRoiCalcs(unittest.TestCase):
 
     def test_series_roi_means_8_3V_no_resample(self):
         dcm_path = os.path.join('test', 'data', '8_3V')
         roi_path = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
-        roi_list = [[roi_path, '1', '1', 'none'],
-                    [roi_path, '2', '2', 'none']]
-        dyn = tictac.image.series_roi_means(dcm_path, roi_list)
+        roi_list = [[roi_path, '1', '1', 'mean', 'none'],
+                    [roi_path, '2', '2', 'mean', 'none']]
+        dyn = tictac.image.series_roi_calcs(dcm_path, roi_list)
 
         tacq_exp = np.array([0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
         self.assertFalse(np.any(dyn['tacq'] - tacq_exp))
@@ -128,9 +128,9 @@ class TestSeriesRoiMeans(unittest.TestCase):
         dcm_path = os.path.join('test', 'data', '8_3V')
         roi_path = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation_2.nrrd')
-        roi_list = [[roi_path, '1', '1', 'roi'],
-                    [roi_path, '2', '2', 'roi']]
-        dyn = tictac.image.series_roi_means(dcm_path, roi_list)
+        roi_list = [[roi_path, '1', '1', 'mean', 'roi'],
+                    [roi_path, '2', '2', 'mean', 'roi']]
+        dyn = tictac.image.series_roi_calcs(dcm_path, roi_list)
 
         r1 = dyn['1']
         r2 = dyn['2']
@@ -142,9 +142,9 @@ class TestSeriesRoiMeans(unittest.TestCase):
         dcm_path = os.path.join('test', 'data', '8_3V')
         roi_path = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation_2.nrrd')
-        roi_list = [[roi_path, '1', '1', 'img'],
-                    [roi_path, '2', '2', 'img']]
-        dyn = tictac.series_roi_means(dcm_path, roi_list)
+        roi_list = [[roi_path, '1', '1', 'mean', 'img'],
+                    [roi_path, '2', '2', 'mean', 'img']]
+        dyn = tictac.series_roi_calcs(dcm_path, roi_list)
 
         r1 = dyn['1']
         r2 = dyn['2']
@@ -156,8 +156,8 @@ class TestSeriesRoiMeans(unittest.TestCase):
         dcm_path = os.path.join('test', 'data', '8_3V')
         roi_path = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
-        roi_list = [[roi_path, '2', 'a', 'none']]
-        dyn = tictac.image.series_roi_means(dcm_path, roi_list)
+        roi_list = [[roi_path, '2', 'a', 'mean', 'none']]
+        dyn = tictac.image.series_roi_calcs(dcm_path, roi_list)
 
         tacq_exp = np.array([0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
         self.assertFalse(np.any(dyn['tacq'] - tacq_exp))
@@ -173,10 +173,10 @@ class TestSeriesRoiMeans(unittest.TestCase):
             'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
         roi_path2 = os.path.join(
             'test', 'data', '8_3V_seg', 'Segmentation_2.nrrd')
-        roi_list = [[roi_path1, '1', 'a', 'none'],
-                    [roi_path2, '1', 'b', 'roi']]
+        roi_list = [[roi_path1, '1', 'a', 'mean', 'none'],
+                    [roi_path2, '1', 'b', 'mean', 'roi']]
 
-        dyn = tictac.image.series_roi_means(dcm_path, roi_list)
+        dyn = tictac.image.series_roi_calcs(dcm_path, roi_list)
 
         r1 = dyn['a']
         r1_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,

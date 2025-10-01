@@ -15,8 +15,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', 'a', 'none',
-                       '--roi', roi_path, '2', 'b', 'none'])
+                       '--roi', roi_path, '1', 'a', 'mean', 'none',
+                       '--roi', roi_path, '2', 'b', 'mean', 'none'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -53,8 +53,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', 'stuff', 'none',
-                       '--roi', roi_path, '2', 'stoff', 'none'])
+                       '--roi', roi_path, '1', 'stuff', 'mean', 'none',
+                       '--roi', roi_path, '2', 'stoff', 'mean', 'none'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -87,7 +87,7 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '2', '2', 'none'])
+                       '--roi', roi_path, '2', '2', 'mean', 'none'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -115,8 +115,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', '1', 'roi',
-                       '--roi', roi_path, '2', '2', 'roi'])
+                       '--roi', roi_path, '1', '1', 'mean', 'roi',
+                       '--roi', roi_path, '2', '2', 'mean', 'roi'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -146,8 +146,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', '1', 'img',
-                       '--roi', roi_path, '2', '2', 'img'])
+                       '--roi', roi_path, '1', '1', 'mean', 'img',
+                       '--roi', roi_path, '2', '2', 'mean', 'img'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -177,8 +177,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', '1', 'none',
-                       '--roi', roi_path, '2', '2', 'none',
+                       '--roi', roi_path, '1', '1', 'mean', 'none',
+                       '--roi', roi_path, '2', '2', 'mean', 'none',
                        "--scale", "1", "1a", "2.0",
                        "--scale", "2", "2a", "0.5"
                        ])
@@ -218,8 +218,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path1, '1', 'a', 'none',
-                       '--roi', roi_path2, '1', 'b', 'roi'
+                       '--roi', roi_path1, '1', 'a', 'mean', 'none',
+                       '--roi', roi_path2, '1', 'b', 'mean', 'roi'
                        ])
 
         # reassemble outfile into dict:
@@ -252,8 +252,8 @@ class TestMainFunction(unittest.TestCase):
         bard_path = os.path.join('test', 'data', 'bard_test.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', 'a', 'none',
-                       '--roi', roi_path, '2', 'b', 'none',
+                       '--roi', roi_path, '1', 'a', 'mean', 'none',
+                       '--roi', roi_path, '2', 'b', 'mean', 'none',
                        '--pvc_bard', 'a', 'b', '15.0', bard_path, 'acorr'])
 
         # reassemble outfile into dict:
