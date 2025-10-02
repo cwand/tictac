@@ -145,7 +145,7 @@ def series_roi_calcs(series_path: str,
 
         for i, roi in enumerate(roi_list):
 
-            roi_img = img
+            img_dup = img
 
             # Resample image if chosen
             if roi[4] == 'img':
@@ -153,14 +153,30 @@ def series_roi_calcs(series_path: str,
                 resampler = sitk.ResampleImageFilter()
                 resampler.SetReferenceImage(rois[i])
                 resampler.SetInterpolator(sitk.sitkNearestNeighbor)
-                roi_img = resampler.Execute(img)
+                img_dup = resampler.Execute(img)
 
             if roi[3] == 'mean':
                 # Apply label stats filter on resampled img and read ROI means
-                label_stats_filter.Execute(roi_img, rois[i])
+                label_stats_filter.Execute(img_dup, rois[i])
 
                 # Append the mean value to the list for each label.
                 res[roi[2]] = np.append(res[roi[2]],
                                         label_stats_filter.GetMean(int(roi[1])))
+
+            if roi[3] == 'zmeanmax':
+
+                n_slices = list(img_dup.GetSize())[2]
+                slice_max = []
+
+                for z in range(n_slices):
+                    img_slice = img_dup[:, :, z]
+                    lbl_slice = rois[i][:, :, z]
+
+                    label_stats_filter.Execute(img_slice, lbl_slice)
+                    if label_stats_filter.HasLabel(int(roi[1])):
+                        slice_max.append(label_stats_filter.GetMaximum(int(roi[1])))
+
+                res[roi[2]] = np.append(res[roi[2]], np.mean(slice_max))
+
 
     return res
