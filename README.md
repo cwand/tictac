@@ -54,14 +54,15 @@ To use tictac you need
 
 To get the mean voxel values in each ROI for each time frame, we run tictac:
 ```
-> python -m tictac -i img_dir --roi roi1.nrrd 1 roi_name none -o tac.txt
+> python -m tictac -i img_dir --roi roi1.nrrd 1 roi_name mean none -o tac.txt
 ```
 The first argument ```-i img_dir``` specifies the path to the dynamic image
-data. The second argument ```--roi roi1.nrrd 1 roi_name none``` specifies
+data. The second argument ```--roi roi1.nrrd 1 roi_name mean none``` specifies
 the ROI, which is extracted with the following options:
 * ```roi1.nrrd``` specifies the path to the ROI image file
 * ```1``` specifies that the ROI voxel value is ```1```
 * ```roi_name``` is the name the ROI will have in the output file
+* ```mean``` specifies that we want the mean voxel value inside the ROI
 * ```none``` specifies that no resampling should be done to the ROI image.
 
 In case more than one ROI is wanted, each one gets its own ```--roi ...```.
@@ -74,10 +75,18 @@ The output file is structured into columns:
 * Each ROI has a column, and for each time-stamp the corresponding
   mean voxel intensity value is calculated.
 
+### ROI compuations
+
+The ROI computation strategy is set by the fourth value in the ```--roi``` argument.
+At this point, two different ROI comutations are implemented in tictac:
+* ```mean```: Calculates the mean voxel value inside the ROI.
+* ```zmeanmax```: Finds the maximum voxel intensity in each z-axis slice of the image,
+  bounded by the ROI, and computes the mean of these maximum values.
+
 ### Resampling
 If the dynamic images and the ROI are not in the same physical space (e.g. from different
 examinations or different modalities), it is necessary to resample one or the other.
-In the ```--roi``` argument the resampling strategy is set as the fourth value, and it can
+In the ```--roi``` argument the resampling strategy is set as the fifth value, and it can
 be either
 * ```none``` (no resampling, so images and ROI must be in the same physical space)
 * ```roi``` (the ROI is resampled to the dynamic image space using nearest neighbour interpolation)

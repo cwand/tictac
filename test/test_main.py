@@ -16,7 +16,7 @@ class TestMainFunction(unittest.TestCase):
 
         __main__.main(['-i', img_dir, '-o', out_path,
                        '--roi', roi_path, '1', 'a', 'mean', 'none',
-                       '--roi', roi_path, '2', 'b', 'mean', 'none'])
+                       '--roi', roi_path, '2', 'b', 'zmeanmax', 'none'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -39,12 +39,13 @@ class TestMainFunction(unittest.TestCase):
         r1 = data_dict['a']
         r1_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,
                            12058.9, 1277.01, 13.4822, 0.748028, 0.0])
-        self.assertTrue(np.all((r1 - r1_exp) < 0.1))
+        self.assertTrue(np.all(np.nan_to_num(np.abs(r1 - r1_exp) / r1_exp) < 0.001))
 
         r2 = data_dict['b']
-        r2_exp = np.array([31.3157, 3501.54, 33128.1, 38544.1,
-                           9529.26, 642.525, 2.57748, 0.345963, 0.0727437])
-        self.assertTrue(np.all((r2 - r2_exp) < 0.1))
+        r2_exp = np.array([276.70753, 28095.651825, 263739.103908,
+                           312983.623189, 82822.236063, 5803.08872, 42.098784,
+                           7.4833927, 1.8483034])
+        self.assertTrue(np.all(np.abs(r2 - r2_exp) / r2_exp < 0.001))
 
     def test_main_labels(self):
         img_dir = os.path.join('test', 'data', '8_3V')

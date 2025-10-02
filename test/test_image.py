@@ -210,3 +210,18 @@ class TestSeriesRoiCalcMeanMaxZ(unittest.TestCase):
                            312983.623189, 82822.236063, 5803.08872, 42.098784,
                            7.4833927, 1.8483034])
         self.assertTrue(np.all(abs(r2 - r2_exp) / r2_exp < 0.001))
+
+class TestRoiVolumes(unittest.TestCase):
+
+    def test_volumes_different_geometries(self):
+        roi_path1 = os.path.join(
+            'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
+        roi_path2 = os.path.join(
+            'test', 'data', '8_3V_seg', 'Segmentation_2.nrrd')
+        roi_list = [[roi_path1, '1', 'a', 'mean', 'none'],
+                    [roi_path2, '1', 'b', 'mean', 'roi']]
+
+        vols = tictac.image.roi_volumes(roi_list)
+
+        self.assertEqual(vols['a'], 29.1784)
+        self.assertEqual(vols['b'], 125.592)

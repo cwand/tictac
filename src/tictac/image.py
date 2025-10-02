@@ -70,6 +70,10 @@ def resample_series_to_reference(series: list[sitk.Image],
     return [resampler.Execute(img) for img in series]
 
 
+def roi_volumes(roi_list: list[list[str]]) -> dict[str, float]:
+    return {'0': 0}
+
+
 def series_roi_calcs(series_path: str,
                      roi_list: list[list[str]],
                      progress: bool = True)\
@@ -80,17 +84,18 @@ def series_roi_calcs(series_path: str,
     loaded. This saves some memory usage compared to loading all images in a
     list and then computing ROI-means, but on the other hand no manipulation
     of the images can be performed after the call of this function.
-    The ROIs are given in a list. Each ROI in the list is another list of four
+    The ROIs are given in a list. Each ROI in the list is another list of five
     string values:
      - roi[0] is the path to the ROI image file
      - roi[1] is the voxel value (label) of the ROI in the image file
      - roi[2] is the name the ROI-data should have in the output file
-     - roi[3] defines the resampling strategy in case the ROI and dynamic
+     - roi[3] is the computation type (mean or zmeanmax)
+     - roi[4] defines the resampling strategy in case the ROI and dynamic
        images are not in the same physical space. This can be either "none"
        (no resampling, the images must be in identical physical space), "img"
        (the dynamic images should be resampled to the ROI image space), "roi"
        (the ROI image should be resampled to the dynamic image physical space).
-    In either case the resampling is done using nearest-neighbour values.
+       In either case the resampling is done using nearest-neighbour values.
     The function returns a dictionary object. The keys in the object are
     'tacq' which stores a list of acquisition times (relative to the first
     image) and the labels of the ROI.
@@ -165,17 +170,22 @@ def series_roi_calcs(series_path: str,
 
             if roi[3] == 'zmeanmax':
 
+                # Iterate through all slices in the image
                 n_slices = list(img_dup.GetSize())[2]
                 slice_max = []
 
                 for z in range(n_slices):
+                    # Get current slice of image and roi
                     img_slice = img_dup[:, :, z]
                     lbl_slice = rois[i][:, :, z]
 
+                    # Create mask
                     label_stats_filter.Execute(img_slice, lbl_slice)
                     if label_stats_filter.HasLabel(int(roi[1])):
+                        # Append the maximum value in the ROI to the list
                         slice_max.append(label_stats_filter.GetMaximum(int(roi[1])))
 
+                # The result is the mean of the maximum values
                 res[roi[2]] = np.append(res[roi[2]], np.mean(slice_max))
 
 
