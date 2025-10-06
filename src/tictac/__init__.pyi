@@ -31,6 +31,12 @@ def series_roi_calcs(series_path: str,
 
 # From pvc.py
 
+def vdil_pvc(dyn: dict[str, npt.NDArray[np.float64]],
+             vols: dict[str, float],
+             label_main: str,
+             label_dil: str,
+             label_bkg: str) -> npt.NDArray[np.float64]: ...
+
 def bard_pvc(aorta: npt.NDArray[np.float64],
              bkg: npt.NDArray[np.float64],
              diameter: float,
