@@ -71,7 +71,39 @@ def resample_series_to_reference(series: list[sitk.Image],
 
 
 def roi_volumes(roi_list: list[list[str]]) -> dict[str, float]:
-    return {'0': 0}
+    """Calculates the volumes of the ROIs in the list.
+    The format of the input ROI-list is the same as in 'series_roi_calcs'.
+    The output is a dict object with keys equal to the roi label (the
+    third value in each roi tuple) and with values equal to the ROI volume in
+    cm^3 (mL)
+
+    Arguments:
+        roi_list    --  The list of rois
+
+    Return value:
+    A dict object with the volume for each ROI indexed by the ROI label.
+    """
+    res = {}
+    for roi in roi_list:
+        # Read ROI image and threshold by the roi image value
+        roi_image = sitk.ReadImage(roi[0])
+        bin_image = sitk.BinaryThreshold(roi_image,
+                                         lowerThreshold=int(roi[1]),
+                                         upperThreshold=int(roi[1]),
+                                         insideValue=1,
+                                         outsideValue=0)
+
+        # Count the number of voxels inside the threshold
+        label_stats = sitk.LabelStatisticsImageFilter()
+        label_stats.Execute(bin_image, roi_image)
+        nvox = label_stats.GetCount(int(roi[1]))
+
+        # Calculate volume as voxel size time voxel count and convert to cm3.
+        spacings = roi_image.GetSpacing()
+        volcm3 = nvox * spacings[0] * spacings[1] * spacings[2] / 1000.0
+        res[roi[2]] = volcm3
+
+    return res
 
 
 def series_roi_calcs(series_path: str,

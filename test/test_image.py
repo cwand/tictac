@@ -223,5 +223,5 @@ class TestRoiVolumes(unittest.TestCase):
 
         vols = tictac.image.roi_volumes(roi_list)
 
-        self.assertEqual(vols['a'], 29.1784)
-        self.assertEqual(vols['b'], 125.592)
+        self.assertAlmostEqual(vols['a'], 29.1784, places=4)
+        self.assertAlmostEqual(vols['b'], 125.592, places=3)
