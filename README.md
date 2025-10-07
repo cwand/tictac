@@ -97,7 +97,7 @@ To apply a scale factor to one of the labels, use the ```--scale``` option. This
 three arguments: the label of the data to correct, the label to use as the corrected
 data and the factor:
 ```
-> python -m tictac -i img_dir --roi roi_blood.nrrd 1 blood none --roi roi_brain.nrrd 1 brain none -o tac.txt --scale blood blood2 1.5 --scale brain brain2 1000
+> python -m tictac -i img_dir --roi roi_blood.nrrd 1 blood mean none --roi roi_brain.nrrd 1 brain mean none -o tac.txt --scale blood blood2 1.5 --scale brain brain2 1000
 ```
 In this example, one could imagine changing the unit from kBq/mL to Bq/mL on the ```brain``` label
 and applying a (rather crude) partial volume correction to the ```blood``` label.
@@ -118,15 +118,15 @@ VDIL (Volume DILation) is the simple approach to PVC. We define three ROIs:
   used to correct the main volume.
 
 Then a signal corrected for partial volume effects, $x_{\mathrm{pvc}}$, 
-is calculated as:
+is calculated as:\
 $$x_{\mathrm{pvc}} = x_{\mathrm{m}} + (x_{\mathrm{d}} - x_{\mathrm{b}})
-\frac{V_\mathrm{d}}{V_\mathrm{m}},$$
+\frac{V_\mathrm{d}}{V_\mathrm{m}},$$\
 where $V_\mathrm{d}$ and $V_\mathrm{m}$ are the volumes of the main and dilated
 ROIs respectively.
 
 To use this routine in tictac, we use the ```--pvc_vdil``` option:
 ```
-> python -m tictac -i img_dir --roi roi.nrrd 1 main none --roi roi.nrrd 2 dil none --roi roi.nrrd 3 bkg none -o tac.txt  --pvc_vdil main dil bkg main_pvc
+> python -m tictac -i img_dir --roi roi.nrrd 1 main mean none --roi roi.nrrd 2 dil mean none --roi roi.nrrd 3 bkg mean none -o tac.txt  --pvc_vdil main dil bkg main_pvc
 ```
 The arguments to this option are (in order):
 * The label of the main ROI
@@ -151,7 +151,7 @@ the true ratio must have been given the diameter of the aorta.
 
 To use this routine in tictac, we use the ```--pvc_bard``` option:
 ```
-> python -m tictac -i img_dir --roi roi_aorta.nrrd 1 aorta none --roi roi_bkg.nrrd 1 bkg none -o tac.txt --pvc_bard aorta bkg 21 bard_table.txt aorta_bard
+> python -m tictac -i img_dir --roi roi_aorta.nrrd 1 aorta mean none --roi roi_bkg.nrrd 1 bkg mean none -o tac.txt --pvc_bard aorta bkg 21 bard_table.txt aorta_bard
 ```
 The arguments to this option are (in order):
 * The label of the aorta ROI
