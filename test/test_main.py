@@ -282,7 +282,6 @@ class TestMainFunction(unittest.TestCase):
         roi_path = os.path.join('test', 'data', '8_3V_seg',
                                 'SegmentationPVC.nrrd')
         out_path = os.path.join('test', 'tac.txt')
-        bard_path = os.path.join('test', 'data', 'bard_test.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
                        '--roi', roi_path, '1', 'center', 'mean', 'none',

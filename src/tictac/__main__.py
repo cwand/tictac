@@ -83,7 +83,6 @@ def main(sys_args: list[str]):
             dyn[pvc[3]] = pvc_corr
         print()
 
-
     # Apply BARD-PVC if required
     if args.pvc_bard:
         for bard in args.pvc_bard:
