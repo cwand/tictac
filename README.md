@@ -104,8 +104,37 @@ and applying a (rather crude) partial volume correction to the ```blood``` label
 
 ### Partial Volume Correction
 
-At this point, only one partial volume correction routine is implemented in
-tictac:
+The following partial volume correction routines are accessible in tictac:
+
+#### VDIL
+
+VDIL (Volume DILation) is the simple approach to PVC. We define three ROIs:
+* The main ROI with a signal $x_{\mathrm{m}}$, which suffers from PVE.
+* A dilated ROI surrounding the main ROI with signal $x_{\mathrm{d}}$, which
+  captures the signal missing from the main ROI.
+* A background ROI, which has the same signal, $x_{\mathrm{b}}$, that the 
+  dilated ROI would have had if there had been no spill-in from the main ROI.
+  This assures that the signal that belongs to the dilated volume is not being 
+  used to correct the main volume.
+
+Then a signal corrected for partial volume effects, $x_{\mathrm{pvc}}$, 
+is calculated as:
+$$x_{\mathrm{pvc}} = x_{\mathrm{m}} + (x_{\mathrm{d}} - x_{\mathrm{b}})
+\frac{V_\mathrm{d}}{V_\mathrm{m}},$$
+where $V_\mathrm{d}$ and $V_\mathrm{m}$ are the volumes of the main and dilated
+ROIs respectively.
+
+To use this routine in tictac, we use the ```--pvc_vdil``` option:
+```
+> python -m tictac -i img_dir --roi roi.nrrd 1 main none --roi roi.nrrd 2 dil none --roi roi.nrrd 3 bkg none -o tac.txt  --pvc_vdil main dil bkg main_pvc
+```
+The arguments to this option are (in order):
+* The label of the main ROI
+* The label of the dilated ROI
+* The label of the background ROI
+* The label to use for the corrected TAC
+
+The volumes of the main and dilated ROIs will be calculated automatically.
 
 #### BARD
 
