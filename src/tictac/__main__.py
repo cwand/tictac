@@ -36,6 +36,12 @@ def main(sys_args: list[str]):
                         metavar=("label_in", "label_out", "factor"),
                         help="Apply a scale factor to label_in and save it "
                              "as label_out")
+    parser.add_argument("--pvc_vdil", action="append", nargs=4,
+                        metavar=("ROI_LABEL", "DIL_LABEL", "BKG_LABEL",
+                                 "LABEL_OUT"),
+                        help="VDIL partial volume correction. Corrects the ROI"
+                             "activity by adding the background corrected"
+                             "activity in a dilated ROI.")
     parser.add_argument("--pvc_bard", action='append', nargs=5,
                         metavar=("ROI_LABEL", "BKG_LABEL",
                                  "ROI_DIAMETER", "TABLE_FILE", "LABEL_OUT"),
@@ -64,6 +70,19 @@ def main(sys_args: list[str]):
             scaled_arr = factor * dyn[scale[0]]
             dyn[scale[1]] = scaled_arr
         print()
+
+    if args.pvc_vdil:
+        vols = tictac.roi_volumes(args.roi)
+        for pvc in args.pvc_vdil:
+            print(f'Applying VDIL-PVC to {pvc[0]}')
+            pvc_corr = tictac.vdil_pvc(dyn,
+                                       vols,
+                                       label_main=pvc[0],
+                                       label_dil=pvc[1],
+                                       label_bkg=pvc[2])
+            dyn[pvc[3]] = pvc_corr
+        print()
+
 
     # Apply BARD-PVC if required
     if args.pvc_bard:
