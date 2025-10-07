@@ -39,7 +39,8 @@ class TestMainFunction(unittest.TestCase):
         r1 = data_dict['a']
         r1_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,
                            12058.9, 1277.01, 13.4822, 0.748028, 0.0])
-        self.assertTrue(np.all(np.nan_to_num(np.abs(r1 - r1_exp) / r1_exp) < 0.001))
+        self.assertTrue(np.all(
+            np.nan_to_num(np.abs(r1 - r1_exp) / r1_exp) < 0.001))
 
         r2 = data_dict['b']
         r2_exp = np.array([276.70753, 28095.651825, 263739.103908,

@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 import tictac.core
 import numpy.typing as npt
-from typing import Any, Optional
+from typing import Any
 
 
 def load_dynamic_series(dicom_path: str) -> dict[str, Any]:
@@ -198,7 +198,8 @@ def series_roi_calcs(series_path: str,
 
                 # Append the mean value to the list for each label.
                 res[roi[2]] = np.append(res[roi[2]],
-                                        label_stats_filter.GetMean(int(roi[1])))
+                                        label_stats_filter.GetMean(int(roi[1]))
+                                        )
 
             if roi[3] == 'zmeanmax':
 
@@ -215,10 +216,10 @@ def series_roi_calcs(series_path: str,
                     label_stats_filter.Execute(img_slice, lbl_slice)
                     if label_stats_filter.HasLabel(int(roi[1])):
                         # Append the maximum value in the ROI to the list
-                        slice_max.append(label_stats_filter.GetMaximum(int(roi[1])))
+                        slice_max.append(
+                            label_stats_filter.GetMaximum(int(roi[1])))
 
                 # The result is the mean of the maximum values
                 res[roi[2]] = np.append(res[roi[2]], np.mean(slice_max))
-
 
     return res

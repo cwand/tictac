@@ -186,6 +186,7 @@ class TestSeriesRoiCalcMeans(unittest.TestCase):
         r2 = dyn['b']
         self.assertAlmostEqual(float(r2[3]), 13473.5, places=1)
 
+
 class TestSeriesRoiCalcMeanMaxZ(unittest.TestCase):
 
     def test_series_roi_meanmaxz_8_3V_no_resample(self):
@@ -203,13 +204,15 @@ class TestSeriesRoiCalcMeanMaxZ(unittest.TestCase):
         r1_exp = np.array([0.0, 15.04654, 8425.7208,
                            84333.10019, 84624.995028, 8757.14972, 61.528992,
                            2.7490014, 0])
-        self.assertTrue(np.nan_to_num(np.all(abs(r1 - r1_exp) / r1_exp) < 0.00001))
+        self.assertTrue(np.nan_to_num(
+            np.all(abs(r1 - r1_exp) / r1_exp) < 0.00001))
 
         r2 = dyn['b']
         r2_exp = np.array([276.70753, 28095.651825, 263739.103908,
                            312983.623189, 82822.236063, 5803.08872, 42.098784,
                            7.4833927, 1.8483034])
         self.assertTrue(np.all(abs(r2 - r2_exp) / r2_exp < 0.001))
+
 
 class TestRoiVolumes(unittest.TestCase):
 

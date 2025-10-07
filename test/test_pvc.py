@@ -15,8 +15,8 @@ class TestVDilPVC(unittest.TestCase):
             'bkg':  np.array([0.0, 1.0, 2.0, 3.0])
         }
         vol = {
-            'main': 100,
-            'rim': 200
+            'main': 100.0,
+            'rim': 200.0
         }
         pvc = vdil_pvc(dyn, vol,
                        label_main="main",
@@ -24,7 +24,6 @@ class TestVDilPVC(unittest.TestCase):
                        label_bkg="bkg")
         exp = np.array([0.0, 0.0, 13.0, 11.0])
         self.assertTrue(np.all(abs(exp - pvc) < 0.00001))
-
 
 
 class TestBardPVC(unittest.TestCase):

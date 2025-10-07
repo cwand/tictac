@@ -3,6 +3,7 @@ import numpy as np
 import numpy.typing as npt
 from scipy.interpolate import RegularGridInterpolator
 
+
 def vdil_pvc(dyn: dict[str, npt.NDArray[np.float64]],
              vols: dict[str, float],
              label_main: str,
@@ -19,7 +20,18 @@ def vdil_pvc(dyn: dict[str, npt.NDArray[np.float64]],
     signal from the dilated signal, and then adding the remaining signal
     into the main ROI, scaled by the volume:
         pvc_corr_signal = main_signal + (dil_signal - bkg_signal) * Vdil/Vmain
-   The volumes should be given in the volume dict-object.
+    The volumes should be given in the volume dict-object, with the roi-label
+    given as the key and the volume as a float.
+
+    Arguments:
+        dyn         --  The ROI TACs, calculated from roi_series_calcs
+        vols        --  The ROI volume dict object
+        label_main  --  The main ROI label
+        label_dil   --  The dilated ROI label
+        label_bkg   --  The background ROI label
+
+    Return value:
+        The PVC corrected main ROI signal.
     """
 
     main_arr = dyn[label_main]
@@ -29,6 +41,7 @@ def vdil_pvc(dyn: dict[str, npt.NDArray[np.float64]],
     bkg_arr = dyn[label_bkg]
 
     return main_arr + (dil_arr - bkg_arr) * dil_vol / main_vol
+
 
 def bard_pvc(aorta: npt.NDArray[np.float64],
              bkg: npt.NDArray[np.float64],
@@ -75,5 +88,3 @@ def bard_pvc(aorta: npt.NDArray[np.float64],
 
     # Return corrected aorta curve
     return np.array(true_ratios * bkg)
-
-
