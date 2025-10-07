@@ -1,8 +1,29 @@
 import os
 import unittest
-from tictac import bard_pvc
+from tictac import bard_pvc, vdil_pvc
 import pandas as pd
 import numpy as np
+
+
+class TestVDilPVC(unittest.TestCase):
+
+    def test_vdil_pvc(self):
+        dyn = {
+            'tacq': np.array([0.0, 3.0, 6.0, 9.0]),
+            'main': np.array([0.0, 1.0, 3.0, 5.0]),
+            'rim':  np.array([0.0, 0.5, 7.0, 6.0]),
+            'bkg':  np.array([0.0, 1.0, 2.0, 3.0])
+        }
+        vol = {
+            'main': 100.0,
+            'rim': 200.0
+        }
+        pvc = vdil_pvc(dyn, vol,
+                       label_main="main",
+                       label_dil="rim",
+                       label_bkg="bkg")
+        exp = np.array([0.0, 0.0, 13.0, 11.0])
+        self.assertTrue(np.all(abs(exp - pvc) < 0.00001))
 
 
 class TestBardPVC(unittest.TestCase):

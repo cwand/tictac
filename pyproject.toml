@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tictac"
-version = "2.1.0"
+version = "3.0.0"
 requires-python = ">= 3.9"
 authors = [
 	{name = "Chris Walther Andersen", email = "cwa@rsyd.dk"},
@@ -28,6 +28,7 @@ classifiers = [
 	"Programming Language :: Python :: 3.10",
 	"Programming Language :: Python :: 3.11",
 	"Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
 	'numpy',

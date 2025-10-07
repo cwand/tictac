@@ -22,8 +22,9 @@ def main(sys_args: list[str]):
     parser.add_argument("-o", metavar="OUT_PATH",
                         help="Output path",
                         required=True)
-    parser.add_argument("--roi", nargs=4, action="append",
-                        metavar=("PATH", "VOX_VALUE", "LABEL", "RESAMPLE"),
+    parser.add_argument("--roi", nargs=5, action="append",
+                        metavar=("PATH", "VOX_VALUE", "LABEL", "OPERATION",
+                                 "RESAMPLE"),
                         help="Define a ROI to extract. PATH is the path to "
                              "the ROI-file. VOX_VALUE is the value of the ROI "
                              "voxels in the file. LABEL is the name of the "
@@ -35,6 +36,12 @@ def main(sys_args: list[str]):
                         metavar=("label_in", "label_out", "factor"),
                         help="Apply a scale factor to label_in and save it "
                              "as label_out")
+    parser.add_argument("--pvc_vdil", action="append", nargs=4,
+                        metavar=("ROI_LABEL", "DIL_LABEL", "BKG_LABEL",
+                                 "LABEL_OUT"),
+                        help="VDIL partial volume correction. Corrects the ROI"
+                             "activity by adding the background corrected"
+                             "activity in a dilated ROI.")
     parser.add_argument("--pvc_bard", action='append', nargs=5,
                         metavar=("ROI_LABEL", "BKG_LABEL",
                                  "ROI_DIAMETER", "TABLE_FILE", "LABEL_OUT"),
@@ -48,8 +55,8 @@ def main(sys_args: list[str]):
     args = parser.parse_args(sys_args)
 
     print("Extracting TACs...")
-    # Run ROI-means code
-    dyn = tictac.series_roi_means(
+    # Run ROI-calcs code
+    dyn = tictac.series_roi_calcs(
         series_path=args.i,
         roi_list=args.roi,
         progress=args.hideprogress)
@@ -62,6 +69,18 @@ def main(sys_args: list[str]):
             factor = float(scale[2])
             scaled_arr = factor * dyn[scale[0]]
             dyn[scale[1]] = scaled_arr
+        print()
+
+    if args.pvc_vdil:
+        vols = tictac.roi_volumes(args.roi)
+        for pvc in args.pvc_vdil:
+            print(f'Applying VDIL-PVC to {pvc[0]}')
+            pvc_corr = tictac.vdil_pvc(dyn,
+                                       vols,
+                                       label_main=pvc[0],
+                                       label_dil=pvc[1],
+                                       label_bkg=pvc[2])
+            dyn[pvc[3]] = pvc_corr
         print()
 
     # Apply BARD-PVC if required

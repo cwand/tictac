@@ -15,8 +15,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', 'a', 'none',
-                       '--roi', roi_path, '2', 'b', 'none'])
+                       '--roi', roi_path, '1', 'a', 'mean', 'none',
+                       '--roi', roi_path, '2', 'b', 'zmeanmax', 'none'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -39,12 +39,14 @@ class TestMainFunction(unittest.TestCase):
         r1 = data_dict['a']
         r1_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,
                            12058.9, 1277.01, 13.4822, 0.748028, 0.0])
-        self.assertTrue(np.all((r1 - r1_exp) < 0.1))
+        self.assertTrue(np.all(
+            np.nan_to_num(np.abs(r1 - r1_exp) / r1_exp) < 0.001))
 
         r2 = data_dict['b']
-        r2_exp = np.array([31.3157, 3501.54, 33128.1, 38544.1,
-                           9529.26, 642.525, 2.57748, 0.345963, 0.0727437])
-        self.assertTrue(np.all((r2 - r2_exp) < 0.1))
+        r2_exp = np.array([276.70753, 28095.651825, 263739.103908,
+                           312983.623189, 82822.236063, 5803.08872, 42.098784,
+                           7.4833927, 1.8483034])
+        self.assertTrue(np.all(np.abs(r2 - r2_exp) / r2_exp < 0.001))
 
     def test_main_labels(self):
         img_dir = os.path.join('test', 'data', '8_3V')
@@ -53,8 +55,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', 'stuff', 'none',
-                       '--roi', roi_path, '2', 'stoff', 'none'])
+                       '--roi', roi_path, '1', 'stuff', 'mean', 'none',
+                       '--roi', roi_path, '2', 'stoff', 'mean', 'none'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -87,7 +89,7 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '2', '2', 'none'])
+                       '--roi', roi_path, '2', '2', 'mean', 'none'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -115,8 +117,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', '1', 'roi',
-                       '--roi', roi_path, '2', '2', 'roi'])
+                       '--roi', roi_path, '1', '1', 'mean', 'roi',
+                       '--roi', roi_path, '2', '2', 'mean', 'roi'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -146,8 +148,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', '1', 'img',
-                       '--roi', roi_path, '2', '2', 'img'])
+                       '--roi', roi_path, '1', '1', 'mean', 'img',
+                       '--roi', roi_path, '2', '2', 'mean', 'img'])
 
         # reassemble outfile into dict:
         with open(out_path) as f:
@@ -177,8 +179,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', '1', 'none',
-                       '--roi', roi_path, '2', '2', 'none',
+                       '--roi', roi_path, '1', '1', 'mean', 'none',
+                       '--roi', roi_path, '2', '2', 'mean', 'none',
                        "--scale", "1", "1a", "2.0",
                        "--scale", "2", "2a", "0.5"
                        ])
@@ -218,8 +220,8 @@ class TestMainFunction(unittest.TestCase):
         out_path = os.path.join('test', 'tac.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path1, '1', 'a', 'none',
-                       '--roi', roi_path2, '1', 'b', 'roi'
+                       '--roi', roi_path1, '1', 'a', 'mean', 'none',
+                       '--roi', roi_path2, '1', 'b', 'mean', 'roi'
                        ])
 
         # reassemble outfile into dict:
@@ -252,8 +254,8 @@ class TestMainFunction(unittest.TestCase):
         bard_path = os.path.join('test', 'data', 'bard_test.txt')
 
         __main__.main(['-i', img_dir, '-o', out_path,
-                       '--roi', roi_path, '1', 'a', 'none',
-                       '--roi', roi_path, '2', 'b', 'none',
+                       '--roi', roi_path, '1', 'a', 'mean', 'none',
+                       '--roi', roi_path, '2', 'b', 'mean', 'none',
                        '--pvc_bard', 'a', 'b', '15.0', bard_path, 'acorr'])
 
         # reassemble outfile into dict:
@@ -274,6 +276,44 @@ class TestMainFunction(unittest.TestCase):
         acorr_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,
                               13745.33, 1678.161, 22.80078, 0.999011, 0.0])
         self.assertTrue(np.all(abs(acorr - acorr_exp) < 0.1))
+
+    def test_main_vdil_pvc(self):
+        img_dir = os.path.join('test', 'data', '8_3V')
+        roi_path = os.path.join('test', 'data', '8_3V_seg',
+                                'SegmentationPVC.nrrd')
+        out_path = os.path.join('test', 'tac.txt')
+
+        __main__.main(['-i', img_dir, '-o', out_path,
+                       '--roi', roi_path, '1', 'center', 'mean', 'none',
+                       '--roi', roi_path, '2', 'rim', 'mean', 'none',
+                       '--roi', roi_path, '3', 'ev', 'mean', 'none',
+                       '--pvc_vdil', 'center', 'rim', 'ev', 'center_corr'])
+
+        # reassemble outfile into dict:
+        with open(out_path) as f:
+            header = f.readline()
+        header_cols = header.split()
+        header_cols = header_cols[1:]
+
+        # Load data (excluding header)
+        data = np.loadtxt(out_path)
+
+        # Put data into a dict object with correct labels
+        data_dict: dict[str, npt.NDArray[np.float64]] = {}
+        for i in range(len(header_cols)):
+            data_dict[header_cols[i]] = data[:, i]
+
+        acorr = data_dict['center_corr']
+        acorr_exp = np.array([-0.37647,
+                              31072.96878,
+                              350550.69040,
+                              704021.27321,
+                              423783.43298,
+                              39208.99795,
+                              -3.87724,
+                              -0.20571,
+                              -0.00988])
+        self.assertTrue(np.all(abs((acorr - acorr_exp) / acorr_exp) < 0.001))
 
     def tearDown(self):
         if os.path.exists(os.path.join('test', 'tac.txt')):
