@@ -32,7 +32,7 @@ def get_acq_datetime(dicom_path: str) -> datetime:
     return datetime.fromisoformat(sd)
 
 
-def get_frame_duration(dicom_path:str) -> float:
+def get_frame_duration(dicom_path: str) -> float:
     """
     Gets the frame duration for this particular image.
 
@@ -47,11 +47,11 @@ def get_frame_duration(dicom_path:str) -> float:
     ds = pydicom.dcmread(dicom_path)
     try:
         # Look for frame duration in the Frame Duration Tag
-        duration_ms = ds[0x00181242].value
+        duration_ms = float(ds[0x00181242].value)
     except KeyError:
         # Handling for Veriton dynamic SPECT (and possibly other systems)
         # Frame duration is set in the Phase section of the meta data
-        duration_ms = ds[0x00540052][0][0x00181242].value
+        duration_ms = float(ds[0x00540052][0][0x00181242].value)
 
     # Convert from ms to s
     return duration_ms / 1000
