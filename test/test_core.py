@@ -23,6 +23,23 @@ class TestGetAcqDateTime(unittest.TestCase):
         self.assertEqual(dt, datetime(2023, 12, 1, 13, 30, 40, 800000))
 
 
+class TestGetFrameDuration(unittest.TestCase):
+
+    def test_frame_duration_8_3V_1(self):
+        dcm_path = os.path.join(
+            'test', 'data', '8_3V',
+            'Patient_test_Study_10_Scan_10_Bed_1_Dyn_1.dcm')
+        dt = tictac.core.get_frame_duration(dcm_path)
+        self.assertEqual(dt, 3.040)
+
+    def test_frame_duration_st2_2(self):
+        dcm_path = os.path.join(
+            'test', 'data', 'st2',
+            'Patient_test080825_Study_3_Scan_33_Bed_1_Dyn_2.dcm')
+        dt = tictac.core.get_frame_duration(dcm_path)
+        self.assertEqual(dt, 5.022)
+
+
 class TestSaveDict(unittest.TestCase):
 
     def test_save_table(self):

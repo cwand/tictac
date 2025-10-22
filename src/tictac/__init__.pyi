@@ -2,13 +2,15 @@ import SimpleITK as sitk
 from datetime import datetime
 import numpy.typing as npt
 import numpy as np
-from typing import Any, Optional
+from typing import Any
 from pandas import DataFrame
 
 
 # From core.py
 
 def get_acq_datetime(dicom_path: str) -> datetime: ...
+
+def get_frame_duration(dicom_path:str) -> float: ...
 
 def save_table(table: dict[str, npt.NDArray[np.float64]], path: str): ...
 

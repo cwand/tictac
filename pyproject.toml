@@ -33,6 +33,7 @@ classifiers = [
 dependencies = [
 	'numpy',
 	'SimpleITK',
+    'pydicom',
 	'tqdm',
 	'pandas',
 	'scipy'
