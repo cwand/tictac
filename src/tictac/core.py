@@ -1,4 +1,5 @@
 import SimpleITK as sitk
+import pydicom
 from datetime import datetime
 import numpy as np
 import numpy.typing as npt
@@ -29,6 +30,31 @@ def get_acq_datetime(dicom_path: str) -> datetime:
     sd = sd + " " + img_time[:2] + ":" + img_time[2:4] + ":" + img_time[4:6]
     sd = sd + "." + img_time[-1].ljust(6, "0")
     return datetime.fromisoformat(sd)
+
+
+def get_frame_duration(dicom_path: str) -> float:
+    """
+    Gets the frame duration for this particular image.
+
+    Arguments:
+        dicom_path  --  The path to the dicom file
+
+    Returns:
+        The frame duration in seconds.
+
+    """
+
+    ds = pydicom.dcmread(dicom_path)
+    try:
+        # Look for frame duration in the Frame Duration Tag
+        duration_ms = float(ds[0x00181242].value)
+    except KeyError:
+        # Handling for Veriton dynamic SPECT (and possibly other systems)
+        # Frame duration is set in the Phase section of the meta data
+        duration_ms = float(ds[0x00540052][0][0x00181242].value)
+
+    # Convert from ms to s
+    return duration_ms / 1000
 
 
 def save_table(table: dict[str, npt.NDArray[np.float64]], path: str):

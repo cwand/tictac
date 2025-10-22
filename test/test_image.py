@@ -114,6 +114,10 @@ class TestSeriesRoiCalcMeans(unittest.TestCase):
         tacq_exp = np.array([0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
         self.assertFalse(np.any(dyn['tacq'] - tacq_exp))
 
+        dur_exp = np.array([3.04, 3.26, 3.26, 3.26,
+                            3.25, 3.26, 3.25, 3.26, 3.26])
+        self.assertFalse(np.any(dyn['fdur'] - dur_exp))
+
         r1 = dyn['1']
         r1_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,
                            12058.9, 1277.01, 13.4822, 0.748028, 0.0])

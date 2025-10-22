@@ -130,7 +130,8 @@ def series_roi_calcs(series_path: str,
        In either case the resampling is done using nearest-neighbour values.
     The function returns a dictionary object. The keys in the object are
     'tacq' which stores a list of acquisition times (relative to the first
-    image) and the labels of the ROI.
+    image), 'fdur' which stores a list of the frame durations, and the labels
+    of the ROI.
 
     Arguments:
     series_path --  The path to the images series dicom files
@@ -139,7 +140,8 @@ def series_roi_calcs(series_path: str,
     Return value:
     A dict object with ROI labels as keys and a list with ROI mean values for
     every time point in the dynamic series as values. Furthermore, the
-    acquisition times are stored in a list under the key 'tacq'.
+    acquisition times are stored in a list under the key 'tacq' and frame
+    durations are stored in a list under the key 'fdur'.
     """
 
     res: dict[str, npt.NDArray[np.float64]] = defaultdict(
@@ -175,10 +177,12 @@ def series_roi_calcs(series_path: str,
         # Load images in order
         img = sitk.ReadImage(name)
 
-        # Find acquisition time and store in list
+        # Find acquisition time and frame duration and store in list
         res['tacq'] = np.append(
             res['tacq'],
             (tictac.core.get_acq_datetime(name) - acq0).total_seconds())
+        res['fdur'] = np.append(
+            res['fdur'], tictac.core.get_frame_duration(name))
 
         for i, roi in enumerate(roi_list):
 

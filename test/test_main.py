@@ -36,6 +36,11 @@ class TestMainFunction(unittest.TestCase):
         tacq_exp = np.array([0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
         self.assertFalse(np.any(tacq - tacq_exp))
 
+        dur = data_dict['fdur']
+        dur_exp = np.array([3.04, 3.26, 3.26, 3.26,
+                            3.25, 3.26, 3.25, 3.26, 3.26])
+        self.assertFalse(np.any(dur - dur_exp))
+
         r1 = data_dict['a']
         r1_exp = np.array([0.0, 0.767681, 1229.61, 12019.3,
                            12058.9, 1277.01, 13.4822, 0.748028, 0.0])
